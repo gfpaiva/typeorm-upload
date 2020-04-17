@@ -37,7 +37,8 @@
       {
         "ts": "never"
       }
-    ]
+    ],
+    "no-cond-assign": "off"
   },
   "settings": {
     "import/resolver": {
