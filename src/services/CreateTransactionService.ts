@@ -7,7 +7,7 @@ import Transaction from '../models/Transaction';
 
 import CreateCategoryService from './CreateCategoryService';
 
-export interface Request {
+interface Request {
   title: string;
   value: number;
   type: 'income' | 'outcome';

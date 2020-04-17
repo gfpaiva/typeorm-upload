@@ -8,9 +8,9 @@ import uploadConfig from '../config/upload';
 import AppError from '../errors/AppError';
 
 import Transaction from '../models/Transaction';
-import CreateTransactionService, { Request } from './CreateTransactionService';
+import CreateTransactionService from './CreateTransactionService';
 
-interface RequestFile {
+interface Request {
   file: string;
 }
 
@@ -29,7 +29,7 @@ type PromiseCsvParse = (
 const csvParse: PromiseCsvParse = promisify(parse);
 
 class ImportTransactionsService {
-  async execute({ file }: RequestFile): Promise<Transaction[]> {
+  async execute({ file }: Request): Promise<Transaction[]> {
     const filePath = path.join(uploadConfig.directory, file);
     const fileExists = await fs.promises.stat(filePath);
 
@@ -43,26 +43,23 @@ class ImportTransactionsService {
     const parsedTransactions = await csvParse(inputFile, {
       delimiter: ', ',
       columns: true,
+      cast: (csvValue, context) => {
+        if (context.column === 'value') {
+          return parseInt(csvValue, 10);
+        }
+
+        return csvValue;
+      },
     });
 
-    const mapSeries = async (
-      iterable: CsvTransaction[],
-      action: ({
-        title,
-        value,
-        type,
-        category,
-      }: Request) => Promise<Transaction>,
-    ) => {
-      for (const x of iterable) {
-        return await action(x);
-      }
-    };
+    /* eslint-disable-next-line no-restricted-syntax */
+    for (const parsedTransaction of parsedTransactions) {
+      /* eslint-disable-next-line no-await-in-loop */
+      const transaction = await createTransaction.execute(parsedTransaction);
+      transactions.push(transaction);
+    }
 
-    const hmm = createTransaction.execute;
-
-    const transactionsss = await mapSeries(parsedTransactions, hmm);
-    console.log('ImportTransactionsService -> transactionsss', transactionsss);
+    await fs.promises.unlink(filePath);
 
     return transactions;
   }
