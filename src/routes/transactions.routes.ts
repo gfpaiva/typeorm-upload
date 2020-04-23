@@ -21,6 +21,7 @@ transactionsRouter.get('/', async (request, response) => {
       'transaction.title',
       'transaction.type',
       'transaction.value',
+      'transaction.created_at',
       'category.id',
       'category.title',
     ])
