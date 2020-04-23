@@ -22,6 +22,7 @@ class Transaction {
   type: 'income' | 'outcome';
 
   @Column('integer')
+  // @Column('decimal')
   value: number;
 
   @Column()

@@ -27,6 +27,12 @@ export default class CreateTransaction1587079773157
             name: 'value',
             type: 'integer',
           },
+          /* {
+            name: 'value',
+            type: 'decimal',
+            precision: 10,
+            scale: 2
+          }, */
           {
             name: 'created_at',
             type: 'timestamp',
